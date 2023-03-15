@@ -2,6 +2,31 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Address {
+  address1: String!
+  address2: String!
+  city: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  landmark: String!
+  postcode: Int!
+  state: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+input AddressInput {
+  address1: String!
+  address2: String!
+  city: String!
+  landmark: String!
+  postcode: Int!
+  state: String!
+}
+
 type Auth {
   """JWT access token"""
   accessToken: JWT!
@@ -16,9 +41,28 @@ input ChangePasswordInput {
   oldPassword: String!
 }
 
-input CreatePostInput {
-  content: String!
-  title: String!
+input CreatePropertyAddressInput {
+  address1: String!
+  address2: String!
+  city: String!
+  landmark: String!
+  postcode: Int!
+  state: String!
+}
+
+input CreatePropertyImageInput {
+  url: String!
+}
+
+input CreatePropertyInput {
+  address: CreatePropertyAddressInput!
+  bathrooms: Int!
+  bedrooms: Int!
+  category: PropertyCategory!
+  description: String!
+  images: [CreatePropertyImageInput!]!
+  price: Int!
+  status: PropertyStatus!
 }
 
 """
@@ -38,7 +82,7 @@ input LoginInput {
 
 type Mutation {
   changePassword(data: ChangePasswordInput!): User!
-  createPost(data: CreatePostInput!): Post!
+  createProperty(data: CreatePropertyInput!): Property!
   login(data: LoginInput!): Auth!
   refreshToken(token: JWT!): Token!
   signup(data: SignupInput!): Auth!
@@ -60,58 +104,89 @@ type PageInfo {
   startCursor: String
 }
 
-type Post {
-  author: User
-  content: String
+type Property {
+  address: Address!
+  bathrooms: Int!
+  bedrooms: Int!
+  category: PropertyCategory!
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
+  description: String!
   id: ID!
-  published: Boolean!
-  title: String!
+  images: [PropertyImage!]!
+  price: Int!
+  status: PropertyStatus!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
 }
 
-type PostConnection {
-  edges: [PostEdge!]
+enum PropertyCategory {
+  FOR_RENT
+  FOR_SALE
+}
+
+type PropertyConnection {
+  edges: [PropertyEdge!]
   pageInfo: PageInfo!
   totalCount: Int!
 }
 
-type PostEdge {
+type PropertyEdge {
   cursor: String!
-  node: Post!
+  node: Property!
 }
 
-input PostOrder {
+type PropertyImage {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  property: Property!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  url: String!
+}
+
+input PropertyOrder {
   direction: OrderDirection!
-  field: PostOrderField!
+  field: PropertyOrderField!
 }
 
 """Properties by which post connections can be ordered."""
-enum PostOrderField {
-  content
+enum PropertyOrderField {
+  address
+  bathrooms
+  bedrooms
+  category
   createdAt
+  description
   id
-  published
-  title
+  images
+  price
+  status
   updatedAt
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  SOLD
+  UNDER_OFFER
 }
 
 type Query {
   hello(name: String!): String!
   helloWorld: String!
   me: User!
-  post(postId: String!): Post!
-  publishedPosts(after: String, before: String, first: Int, last: Int, orderBy: PostOrder, query: String, skip: Int): PostConnection!
-  userPosts(userId: String!): [Post!]!
+  properties(after: String, before: String, first: Int, last: Int, orderBy: PropertyOrder, query: String, skip: Int): PropertyConnection!
+  property(propertyId: String!): Property!
 }
 
 """User role"""
 enum Role {
   ADMIN
+  AGENT
   USER
 }
 
@@ -123,7 +198,7 @@ input SignupInput {
 }
 
 type Subscription {
-  postCreated: Post!
+  propertyCreated: Property!
 }
 
 type Token {
@@ -146,7 +221,6 @@ type User {
   firstname: String
   id: ID!
   lastname: String
-  posts: [Post!]
   role: Role!
 
   """Identifies the date and time when the object was last updated."""

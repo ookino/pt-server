@@ -35,7 +35,66 @@ model Post {
   authorId  String?
 }
 
+model Property {
+  id          String         @id @default(uuid())
+  address     Address        @relation(fields: [addressId], references: [id])
+  description String
+  bedrooms    Int
+  bathrooms   Int
+  price       Float
+  category  PropertyCategory
+  status      PropertyStatus
+  images      PropertyImage[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  addressId   String
+}
+
+model PropertyImage {
+  id         String   @id @default(uuid())
+  url        String
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId String
+}
+
+
+
+model Agency {
+  id          String     @id @default(uuid())
+  name        String
+  email       String     @unique
+  phoneNumber String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  address     Address    @relation(fields: [addressId], references: [id])
+  addressId   String
+}
+
+model Address {
+id         String     @id @default(uuid())
+ address1     String
+ address2     String
+city       String
+postcode   Int
+state  String
+landmark     String
+  properties Property[]
+  Agency Agency[]
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  SOLD
+  UNDER_OFFER
+}
+
+enum PropertyCategory {
+  FOR_SALE
+  FOR_RENT
+}
+
 enum Role {
   ADMIN
+  AGENT
   USER
 }

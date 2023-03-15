@@ -4,7 +4,7 @@ query UserPosts {
   }
 }
 
-query PublishedPostsConnection {
+query PropertiesConnection {
   publishedPosts(first: 20, orderBy: { field: title, direction: desc }) {
     totalCount
     edges {

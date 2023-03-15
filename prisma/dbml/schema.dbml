@@ -25,9 +25,72 @@ Table Post {
   authorId String
 }
 
+Table Property {
+  id String [pk]
+  address Address [not null]
+  description String [not null]
+  bedrooms Int [not null]
+  bathrooms Int [not null]
+  price Float [not null]
+  category PropertyCategory [not null]
+  status PropertyStatus [not null]
+  images PropertyImage [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  addressId String [not null]
+}
+
+Table PropertyImage {
+  id String [pk]
+  url String [not null]
+  property Property [not null]
+  propertyId String [not null]
+}
+
+Table Agency {
+  id String [pk]
+  name String [not null]
+  email String [unique, not null]
+  phoneNumber String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  address Address [not null]
+  addressId String [not null]
+}
+
+Table Address {
+  id String [pk]
+  address1 String [not null]
+  address2 String [not null]
+  city String [not null]
+  postcode Int [not null]
+  state String [not null]
+  landmark String [not null]
+  properties Property [not null]
+  Agency Agency [not null]
+}
+
+Enum PropertyStatus {
+  AVAILABLE
+  SOLD
+  UNDER_OFFER
+}
+
+Enum PropertyCategory {
+  FOR_SALE
+  FOR_RENT
+}
+
 Enum Role {
   ADMIN
+  AGENT
   USER
 }
 
 Ref: Post.authorId > User.id
+
+Ref: Property.addressId > Address.id
+
+Ref: PropertyImage.propertyId > Property.id
+
+Ref: Agency.addressId > Address.id
